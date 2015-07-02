@@ -18,11 +18,17 @@ exports.serveAssets = function(res, asset, callback) {
       res.writeHead(404, exports.headers);
       res.end();
     }
-    exports.headers['Content-Type'] = mime.lookup(asset);
+    //exports.headers['Content-Type'] = mime.lookup(asset);
     res.writeHead(200, exports.headers);
     res.end(data);
   });
 
 };
+
+exports.sendRedirect = function(res, loc, status){
+  status = status || 302;
+  res.writeHead(status, {Location: loc});
+  res.end();
+}
 
 // As you progress, keep thinking about what helper functions you can put here!

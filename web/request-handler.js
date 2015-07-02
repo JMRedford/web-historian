@@ -45,8 +45,27 @@ exports.handleRequest = function (req, res) {
       requestBody += data;
     })
     req.on('end', function(){
-      archive.addUrlToList(requestBody.slice(4),function(){});
-    })
-    res.end()
+      var url = requestBody.slice(4);
+      archive.isUrlInList(url, function(inList){
+        if(inList){
+          archive.isUrlArchived(url, function(inArchive){
+            if(inArchive){
+               //display page
+               httpHelper.serveAssets(res, archive.paths.archivedSites + '/' + url);
+            }else{
+               //display loading
+               httpHelper.sendRedirect(res, archive.paths.siteAssets + '/loading.html');
+            }
+          })
+        }else{
+           //append to list
+           archive.addUrlToList(url, function(){
+             httpHelper.sendRedirect(res, archive.paths.siteAssets + '/loading.html');
+           });
+           //display loading
+        }
+      });
+    });
   }
+
 };

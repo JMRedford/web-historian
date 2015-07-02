@@ -43,13 +43,12 @@ exports.isUrlInList = function(url, callback){
   });
 };
 
-exports.addUrlToList = function(url, callback){
+exports.addUrlToList = function(url){
   exports.isUrlInList(url, function(inList){
     if(!inList){
-      fs.appendFile(exports.paths.list,'\n' + url);
+      fs.appendFile(exports.paths.list,url + '\n');
     }
   })
-  callback();
 };
 
 exports.isUrlArchived = function(url, callback){
