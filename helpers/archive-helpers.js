@@ -63,7 +63,7 @@ exports.isUrlArchived = function(url, callback){
 };
 
 exports.downloadUrls = function(pendingArray){
-  for (var i = 0; i < pendingArray.length; i++){
+  for (var i = 1; i < pendingArray.length; i++){
     var uri = 'http://'+ pendingArray[i];
     request(uri).pipe(fs.createWriteStream(exports.paths.archivedSites + '/' + pendingArray[i]));
     exports.addUrlToList(pendingArray[i],function(){});

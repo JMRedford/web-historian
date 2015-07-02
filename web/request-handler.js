@@ -5,36 +5,48 @@ var httpHelper = require('./http-helpers');
 // require more modules/folders here!
 
 exports.handleRequest = function (req, res) {
-  res.end(archive.paths.list);
+  console.log('handling a request to url: '+req.url);
+  //res.end(archive.paths.list);
 
   if(req.method === 'GET'){
     //check req.url is / then serve up our index.html
     //else if req.url is /sites/* then check to see if the * is in our list of sites that have bee archived and serve it up if it is
     if(req.url === '/'){
-      var asset = archive.paths.siteAssets + '/index.html'
-      httpHelper.serveAssets(res, asset, function(){});
-      response.writeHead(201, httpHelper.headers);
+      httpHelper.serveAssets(res, archive.paths.siteAssets + '/index.html');
+    }else if(req.url === '/styles.css'){
+      httpHelper.serveAssets(res, archive.paths.siteAssets + '/styles.css')
     }else{
-      archive.isUrlInList(req.url.slice(1), function(isInList){
+      var url = req.url.slice(1);
+      archive.isUrlInList(url, function(isInList){
         if(isInList){
           //is in list
-          archive.isUrlArchived(req.url.slice(1), function(isArchived){
+          archive.isUrlArchived(url, function(isArchived){
             if(isArchived){
-              //serve it up
+              //serve up the requested page with httpHelper.serveAssets(res, asset, callback)
+              httpHelper.serveAssets(res, archive.paths.archivedSites + '/' + url);
             } else {
-              //serve up robots are working
+              //serve up 'robots are working' with httpHelper.serveAssets(res, asset, callback)
+              httpHelper.serveAssets(res, archive.paths.siteAssets + '/loading.html');
             }
           });
         } else {
           //not in list
           //serve up 404
+          res.writeHead(404);
+          res.end();
         }
       });
     }
-
-    response.writeHead(statusCode, httpHelper.headers);
-    response.end();
+  }
+  //handle a post
+  else if(req.method === 'POST'){
+    var requestBody = '';
+    req.on('data', function(data){
+      requestBody += data;
+    })
+    req.on('end', function(){
+      archive.addUrlToList(requestBody.slice(4),function(){});
+    })
+    res.end()
   }
 };
-        var asset = archive.paths.archivedSites + req.url;
-        httpHelper.serveAssets(res, asset, function(){});

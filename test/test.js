@@ -139,7 +139,7 @@ describe("archive helpers", function(){
   });
 
   describe("#downloadUrls", function () {
-    xit("should download all pending urls in the list", function (done) {
+    it("should download all pending urls in the list", function (done) {
       var urlArray = ["www.example.com", "www.google.com"];
       archive.downloadUrls(urlArray);
 
@@ -147,7 +147,7 @@ describe("archive helpers", function(){
       setTimeout(function () {
         expect(fs.readdirSync(archive.paths.archivedSites)).to.deep.equal(urlArray);
         done();
-      }, 500);
+      }, 2500);
     });
   });
 });
